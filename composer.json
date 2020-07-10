@@ -1,0 +1,25 @@
+{
+  "name": "rayatomsk/paddle-api",
+  "type": "library",
+  "description": "Paddle.com API PHP library",
+  "keywords": ["paddle","api","php"],
+  "homepage": "https://github.com/RayAtomsk/paddle-php",
+  "license": "MIT",
+  "require": {
+    "php": ">=5.3.0",
+    "ext-curl": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Paddle\\": "src"
+    }
+  },
+  "authors": [
+    {
+      "name": "Andrii Holubenko",
+      "email": "rayatomsk@gmail.com",
+      "homepage": "https://www.linkedin.com/in/andrii-holubenko-8a110264/",
+      "role": "Full Stack Web Developer"
+    }
+  ]
+}
