@@ -48,4 +48,54 @@ class API
         if (!empty($vendorID)) $this->vendorID = (int) $vendorID;
         if (!empty($vendorAuthCode)) $this->vendorAuthCode = (string) $vendorAuthCode;
     }
+
+    /**
+     * Check if credentials is set.
+     *
+     * @return bool
+     */
+    public function isSetCredentials()
+    {
+       return (!empty($this->vendorID) && !empty($this->vendorAuthCode));
+    }
+
+    /**
+     * Get Checkout API object.
+     *
+     * @return Checkout
+     */
+    public function checkout()
+    {
+        return new Checkout($this);
+    }
+
+    /**
+     * Get Product API object.
+     *
+     * @return Product
+     */
+    public function product()
+    {
+        return new Product($this);
+    }
+
+    /**
+     * Get Subscription API object.
+     *
+     * @return Subscription
+     */
+    public function subscription()
+    {
+        return new Subscription($this);
+    }
+
+    /**
+     * Get Alert API object.
+     *
+     * @return Alert
+     */
+    public function alert()
+    {
+        return new Alert($this);
+    }
 }
