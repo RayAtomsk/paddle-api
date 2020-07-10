@@ -5,13 +5,14 @@
   "keywords": ["paddle","api","php"],
   "homepage": "https://github.com/RayAtomsk/paddle-php",
   "license": "MIT",
+  "minimum-stability": "dev",
   "require": {
     "php": ">=5.3.0",
     "ext-curl": "*"
   },
   "autoload": {
-    "psr-4": {
-      "Paddle\\": "src"
+    "psr-0": {
+      "Paddle": "src/"
     }
   },
   "authors": [
