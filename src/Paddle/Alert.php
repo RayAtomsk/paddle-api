@@ -26,10 +26,10 @@ class Alert extends Type
     public function getWebhookHistory($page, $alertsPerPage = 10, $queryHead = null, $queryTail = null)
     {
         return $this->api->request('POST', '/2.0/alert/webhooks', [
-            'page'              => $page,
-            'alerts_per_page'   => $alertsPerPage,
-            'query_head'        => $queryHead,
-            'query_tail'        => $queryTail
+            'page'              => (int) $page,
+            'alerts_per_page'   => (int) $alertsPerPage,
+            'query_head'        => (is_null($queryHead)) ? $queryHead : (string) $queryHead,
+            'query_tail'        => (is_null($queryTail)) ? $queryTail : (string) $queryTail
         ]);
     }
 }
