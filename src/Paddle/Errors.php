@@ -1,6 +1,10 @@
 <?php
 namespace Paddle;
 
+/**
+ * Class Errors
+ * @package Paddle
+ */
 class Errors
 {
     const ERROR_400 = 'cURL produced error: ';

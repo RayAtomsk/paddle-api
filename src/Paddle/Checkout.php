@@ -13,6 +13,7 @@ class Checkout extends Type
 {
     /**
      * Get information about an order after a transaction completes.
+     * @link https://developer.paddle.com/api-reference/checkout-api/order-details/getorder
      *
      * @param string $checkoutID The identifier of the buyer's checkout
      *
@@ -29,6 +30,7 @@ class Checkout extends Type
 
     /**
      * Retrieve customer purchase or license history
+     * @link https://developer.paddle.com/api-reference/checkout-api/user-history/getuserhistory
      *
      * @param string $email The email address of the customer.
      * @param int $vendorID Required if $productID is not specified.
@@ -49,6 +51,7 @@ class Checkout extends Type
 
     /**
      * Retrieve prices for one or multiple products or plans.
+     * @link https://developer.paddle.com/api-reference/checkout-api/prices/getprices
      *
      * @param string $productIDs A comma-separated list of product (or subscription plan) IDs to return prices for.
      *      Please note that the product needs to be fully set-up in the dashboard (checkout link is available);
