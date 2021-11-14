@@ -2,6 +2,7 @@
 namespace Paddle;
 
 use Exception;
+use InvalidArgumentException;
 
 /**
  * Class Subscription
@@ -75,15 +76,39 @@ class Subscription extends Type
      * Update the quantity, price, and/or plan of a user's subscription.
      * https://developer.paddle.com/api-reference/subscription-api/users/updateuser
      *
+     * @param int $subscriptionID The specific user subscription ID.
+     * @param array<string,mixed> $changes
+     *         $changes = [
+     *              "quantity"          => (int) The new quantity to be applied to the subscription.
+     *              "currency"          => (string) The currency that the recurring price should be charged in. E.g. USD, GBP, EUR, etc. This must be the same as the currency of the existing subscription. Optional, but required if setting recurring_price. 
+     *              "recurring_price"   => (int|float) The new recurring price per quantity unit to apply to the subscription. Please note this is a singular price, i.e 11.00.
+     *              "plan_id"           => (int) The new plan ID to move the subscription to.
+     *              "prorate"           => (boolean) Whether the change in subscription should be prorated.
+     *              "bill_immediately"  => (boolean) If the subscription should bill for the next interval at the revised figures immediately.
+     *              "keep_modifiers"    => (boolean) Retain the existing modifiers on the user subscription.
+     *              "passthrough"       => (string) Update the additional data associated with this subscription, like additional features, add-ons and seats. This will be included in all subsequent webhooks, and is often a JSON string of relevant data.
+     *              "pause"             => (boolean) Pause or restart a subscription. If the subscription is not paused and this is set to true, the  will be changed to “paused” when the subscription’s next scheduled payment date is reached. If this is specified, the following modifications cannot be included as well: bill_immediately, keep_modifiers, prorate, quantity, recurring_price, passthrough, plan_id
+     *         ]
+     *
      * @return array
      *
      * @throws Exception
+     * @throws InvalidArgumentException
      */
-    public function updateUser()
+    public function updateUser($subscriptionID, $changes)
     {
-        return $this->api->request('POST', '/2.0/subscription/users/update', [
+        if (!is_array($changes)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    "The updateUser method expects \$changes to be an array, but a received %s.",
+                    gettype($changes)
+                )
+            );
+        }
 
-        ]);
+        $changes["subscription_id"] = (int) $subscriptionID;
+
+        return $this->api->request('POST', '/2.0/subscription/users/update', $changes);
     }
 
     /**
