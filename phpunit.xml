@@ -12,6 +12,7 @@
     <testsuites>
         <testsuite name="API Test Suite">
             <file>./tests/APITest.php</file>
+            <file>./tests/SubscriptionTest.php</file>
         </testsuite>
     </testsuites>
 </phpunit>
