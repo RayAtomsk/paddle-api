@@ -9,11 +9,13 @@ class API
      * @var string Paddle Checkout API base URL.
      */
     const PADDLE_CHECKOUT_API_URL = 'https://checkout.paddle.com/api';
+    const PADDLE_SANDBOX_CHECKOUT_API_URL = 'https://sandbox-checkout.paddle.com/api';
 
     /**
      * @var string Paddle Product API, Subscription API and Alert API base URL.
      */
     const PADDLE_VENDOR_API_URL = 'https://vendors.paddle.com/api';
+    const PADDLE_SANDBOX_VENDOR_API_URL = 'https://sandbox-vendors.paddle.com/api';
 
     /**
      * @var int $vendorID The vendor ID identifies your seller account.
@@ -26,6 +28,7 @@ class API
     protected $vendorID;
     protected $vendorAuthCode;
     protected $requestTimeout = 30;
+    protected $sandbox = false;
 
     /**
      * Paddle constructor.
@@ -39,11 +42,25 @@ class API
      *      This can be found in Developer Tools > Authentication.
      * @param int $requestTimeout Request timeout in seconds. Default is 30.
      */
-    public function __construct($vendorID = null, $vendorAuthCode = null, $requestTimeout = null)
+    public function __construct($vendorID = null, $vendorAuthCode = null, $requestTimeout = null, $sandbox = false)
     {
         $this->init($vendorID, $vendorAuthCode, $requestTimeout);
+        if ($sandbox) {
+            $this->setSandbox();
+        }
+
     }
 
+    /**
+     * Set sandbox mode.
+     *
+     * @return $this
+     */
+
+    public function setSandbox(){
+        $this->sandbox = true;
+        return $this;
+    }
     /**
      * Initialize Paddle API credentials.
      * Optionally sets vendor ID and/or vendor auth code.
@@ -124,10 +141,16 @@ class API
         curl_setopt($curlClient, CURLOPT_RETURNTRANSFER, true);
 
         if ($method === 'post') {
+            if($this->sandbox){
+                $requestURL = self::PADDLE_SANDBOX_VENDOR_API_URL . $uri;
+            }
             $requestURL = self::PADDLE_VENDOR_API_URL . $uri;
             curl_setopt($curlClient, CURLOPT_POST, true);
             curl_setopt($curlClient, CURLOPT_POSTFIELDS, $parameters);
         } else {
+            if($this->sandbox){
+                $requestURL = self::PADDLE_SANDBOX_CHECKOUT_API_URL . $uri . '?' . $parameters;
+            }
             $requestURL = self::PADDLE_CHECKOUT_API_URL . $uri . '?' . $parameters;
         }
 
