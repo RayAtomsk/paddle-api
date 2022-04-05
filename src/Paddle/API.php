@@ -5,26 +5,29 @@ use Exception;
 
 class API
 {
-    /**
-     * @var string Paddle Checkout API base URL.
-     */
+    /** @var string Paddle Production Checkout API base URL */
     const PADDLE_CHECKOUT_API_URL = 'https://checkout.paddle.com/api';
-
-    /**
-     * @var string Paddle Product API, Subscription API and Alert API base URL.
-     */
+    /** @var string Paddle Sandbox Checkout API base URL */
+    const PADDLE_SANDBOX_CHECKOUT_API_URL = 'https://sandbox-vendors.paddle.com/api';
+    /** @var string Paddle Production Product API, Subscription API and Alert API base URL */
     const PADDLE_VENDOR_API_URL = 'https://vendors.paddle.com/api';
+    /** @var string Paddle Sandbox Product API, Subscription API and Alert API base URL */
+    const PADDLE_SANDBOX_VENDOR_API_URL = 'https://sandbox-vendors.paddle.com/api';
 
-    /**
-     * @var int $vendorID The vendor ID identifies your seller account.
-     *      This can be found in Developer Tools > Authentication.
-     * @var string $vendorAuthCode The vendor auth code is a private API key for authenticating API requests.
-     *      This key should never be used in client side code or shared publicly.
-     *      This can be found in Developer Tools > Authentication.
-     * @var int $requestTimeout Request timeout in seconds. Default is 30.
-     */
+    /** @var string $checkoutURL Paddle Checkout API base URL depending on Environment configuration */
+    protected $checkoutURL = self::PADDLE_CHECKOUT_API_URL;
+    /** @var string $vendorURL Paddle Vendor API base URL depending on Environment configuration */
+    protected $vendorURL = self::PADDLE_VENDOR_API_URL;
+
+    /** @var int $vendorID The vendor ID identifies your seller account.
+     *      This can be found in Developer Tools > Authentication. */
     protected $vendorID;
+    /** @var string $vendorAuthCode The vendor auth code is a private API key for authenticating API requests.
+     *      This key should never be used in client side code or shared publicly.
+     *      This can be found in Developer Tools > Authentication. */
     protected $vendorAuthCode;
+    /** @var int $vendorID The vendor ID identifies your seller account.
+     *      This can be found in Developer Tools > Authentication. */
     protected $requestTimeout = 30;
 
     /**
@@ -38,10 +41,15 @@ class API
      *      This key should never be used in client side code or shared publicly.
      *      This can be found in Developer Tools > Authentication.
      * @param int $requestTimeout Request timeout in seconds. Default is 30.
+     * @param bool $sandbox [optional] Configure Client as Production or Sandbox.
      */
-    public function __construct($vendorID = null, $vendorAuthCode = null, $requestTimeout = null)
+    public function __construct($vendorID = null, $vendorAuthCode = null, $requestTimeout = null, $sandbox = false)
     {
         $this->init($vendorID, $vendorAuthCode, $requestTimeout);
+
+        if ($sandbox) {
+            $this->setEnvironment($sandbox);
+        }
     }
 
     /**
@@ -62,6 +70,38 @@ class API
         if (!empty($vendorID)) $this->vendorID = (int) $vendorID;
         if (!empty($vendorAuthCode)) $this->vendorAuthCode = (string) $vendorAuthCode;
         if (!empty($requestTimeout)) $this->requestTimeout = (int) $requestTimeout;
+    }
+
+    /**
+     * Set Environment for Client.
+     *
+     * @param bool $sandbox [optional] Sandbox environment flag. Default is false.
+     */
+    protected function setEnvironment($sandbox = false)
+    {
+        if ($sandbox) {
+            $this->checkoutURL = self::PADDLE_SANDBOX_CHECKOUT_API_URL;
+            $this->vendorURL = self::PADDLE_SANDBOX_VENDOR_API_URL;
+        } else {
+            $this->checkoutURL = self::PADDLE_CHECKOUT_API_URL;
+            $this->vendorURL = self::PADDLE_VENDOR_API_URL;
+        }
+    }
+
+    /**
+     * Set Sandbox Environment for Client.
+     */
+    public function setSandboxEnv()
+    {
+        $this->setEnvironment(true);
+    }
+
+    /**
+     * Set Production Environment for Client.
+     */
+    public function setProductionEnv()
+    {
+        $this->setEnvironment();
     }
 
     /**
@@ -124,11 +164,11 @@ class API
         curl_setopt($curlClient, CURLOPT_RETURNTRANSFER, true);
 
         if ($method === 'post') {
-            $requestURL = self::PADDLE_VENDOR_API_URL . $uri;
+            $requestURL = $this->vendorURL . $uri;
             curl_setopt($curlClient, CURLOPT_POST, true);
             curl_setopt($curlClient, CURLOPT_POSTFIELDS, $parameters);
         } else {
-            $requestURL = self::PADDLE_CHECKOUT_API_URL . $uri . '?' . $parameters;
+            $requestURL = $this->checkoutURL . $uri . '?' . $parameters;
         }
 
         curl_setopt($curlClient, CURLOPT_URL, $requestURL);
